@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: #007bff;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            width: 250px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Login</h1>
+    <form id="loginForm" action="/test-login" method="POST">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button type="submit" id="testLoginBtn">Test Login</button>
+    </form>
+
+    <!-- Spinner for feedback while test is running -->
+    <div id="loading">Running Test...</div>
+    
+    <!-- Display result after testing -->
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("testLoginBtn").addEventListener("click", function(event) {
+            event.preventDefault();  // Prevent form submission
+
+            // Show loading spinner
+            document.getElementById("loading").style.display = "block";
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Send data via fetch API
+            fetch("/test-login", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                document.getElementById("loading").style.display = "none";
+                // Display output or error
+                document.getElementById("result").innerText = data.output || data.error;
+            })
+            .catch(error => {
+                // Hide loading spinner
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("result").innerText = "Error running test.";
+            });
+        });
+    </script>
+</body>
+</html>
